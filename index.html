@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Happy Birthday Jamie!</title>
+
+    <style>
+
+        /* =========================================
+
+           FONT
+
+           ========================================= */
+
+        @font-face {
+
+            font-family: "Home Video";
+
+            src: url("fonts/HomeVideo-Regular.ttf") format("truetype");
+
+            font-weight: normal;
+
+            font-style: normal;
+
+            font-display: swap;
+
+        }
+
+        * {
+
+            box-sizing: border-box;
+
+        }
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background: #000;
+
+            color: #fff;
+
+            font-family: "Home Video";
+
+        }
+
+        /* =========================================
+
+           PORTRAIT CARD
+
+           ========================================= */
+
+        .card {
+
+            width: min(90vw, 500px);
+
+            height: min(85vh, 700px);
+
+            perspective: 1400px;
+
+            cursor: pointer;
+
+        }
+
+        .card-inner {
+
+            position: relative;
+
+            width: 100%;
+
+            height: 100%;
+
+            transition:
+
+                transform 1s cubic-bezier(.2, .8, .2, 1);
+
+            transform-style: preserve-3d;
+
+        }
+
+        /* Flip when clicked */
+
+        .card.flipped .card-inner {
+
+            transform: rotateY(180deg);
+
+        }
+
+        /* =========================================
+
+           BOTH SIDES
+
+           ========================================= */
+
+        .card-face {
+
+            position: absolute;
+
+            inset: 0;
+
+            border: 1px solid #333;
+
+            background: #050505;
+
+            backface-visibility: hidden;
+
+            -webkit-backface-visibility: hidden;
+
+            overflow: hidden;
+
+        }
+
+        /* =========================================
+
+           FRONT
+
+           ========================================= */
+
+        .card-front {
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 25px;
+
+        }
+
+        #art-container {
+
+            width: 100%;
+
+            height: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 0;
+
+        }
+
+        /* =========================================
+
+           MAIN ASCII ART
+
+           ========================================= */
+
+        #ascii {
+
+            font-family: monospace;
+
+            white-space: pre;
+
+            font-size: 3px;
+
+            line-height: 1;
+
+            margin: 0;
+
+            max-width: 100%;
+
+            text-align: left;
+
+        }
+
+        /* Line currently being drawn */
+
+        .drawing {
+
+            color: #fff;
+
+            text-shadow:
+
+                0 0 4px #fff,
+
+                0 0 8px #fff,
+
+                0 0 14px #fff;
+
+        }
+
+        /* Finished lines */
+
+        .finished {
+
+            color: #aaa;
+
+        }
+
+        /* =========================================
+
+           FLIP HINT
+
+           ========================================= */
+
+        .flip-hint {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+
+            appearance: none;
+            border: 1px solid #666;
+            background: transparent;
+            padding: 10px 16px;
+
+            color: #aaa;
+            font-family: "Home Video", monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+
+            cursor: pointer;
+            opacity: 0;
+
+            animation: showHint 1s ease forwards;
+            animation-delay: 4s;
+
+            transition:
+                color 0.2s ease,
+                border-color 0.2s ease,
+                text-shadow 0.2s ease,
+                transform 0.1s ease;
+        }
+
+        .flip-hint:hover {
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .flip-hint:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        @keyframes showHint {
+
+            to {
+
+                opacity: 1;
+
+            }
+
+        }
+
+        /* =========================================
+
+           BACK
+
+           ========================================= */
+
+        .card-back {
+
+            transform: rotateY(180deg);
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 45px;
+
+        }
+
+        .message {
+
+            max-width: 360px;
+
+            text-align: center;
+
+        }
+
+        .message h1 {
+
+            margin: 0 0 30px;
+
+            font-size: 26px;
+
+            letter-spacing: 3px;
+
+            color: #fff;
+
+        }
+
+        .message p {
+
+            margin: 0 0 20px;
+
+            font-size: 15px;
+
+            line-height: 1.8;
+
+            color: #bbb;
+
+        }
+
+        .message .signature {
+
+            margin-top: 35px;
+
+            color: #fff;
+
+            font-size: 16px;
+
+        }
+
+        /* =========================================
+
+           ASCII CONFETTI
+
+           ========================================= */
+
+        .ascii-confetti {
+
+            position: fixed;
+
+            top: -2rem;
+
+            left: 0;
+
+            z-index: 9999;
+
+            color: #fff;
+
+            font-family: monospace;
+
+            font-weight: bold;
+
+            pointer-events: none;
+
+            user-select: none;
+
+            text-shadow:
+
+                0 0 4px #fff,
+
+                0 0 8px #fff;
+
+            animation:
+
+                asciiFall linear forwards;
+
+        }
+
+        @keyframes asciiFall {
+
+            0% {
+
+                transform:
+
+                    translate3d(0,
+
+                        -5vh,
+
+                        0) rotate(0deg);
+
+                opacity: 1;
+
+            }
+
+            100% {
+
+                transform:
+
+                    translate3d(var(--drift),
+
+                        110vh,
+
+                        0) rotate(var(--spin));
+
+                opacity: 0;
+
+            }
+
+        }
+
+        /* =========================================
+
+           DO NOT CLICK BUTTON
+
+           ========================================= */
+
+        .secret-area {
+
+            margin-top: 25px;
+
+        }
+
+        #dont-click {
+            appearance: none;
+            border: 1px solid #666;
+            background: transparent;
+            padding: 10px 16px;
+
+            color: #aaa;
+            font-family: "Home Video", monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+
+            cursor: pointer;
+
+            transition:
+                color 0.2s ease,
+                border-color 0.2s ease,
+                text-shadow 0.2s ease,
+                transform 0.1s ease;
+        }
+
+        #dont-click:hover {
+            color: #fff;
+            border-color: #fff;
+        }
+
+        #dont-click:active {
+            transform: scale(0.95);
+        }
+
+        #dont-click:disabled {
+            cursor: default;
+            color: #fff;
+        }
+
+        /* =========================================
+
+           DVD BOUNCING CAT
+
+           ========================================= */
+
+        /*
+
+         * IMPORTANT:
+
+         *
+
+         * This is outside the card.
+
+         *
+
+         * That means position: fixed is relative
+
+         * to the browser window rather than the
+
+         * transformed card.
+
+         */
+
+        .cat-reveal {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 10000;
+
+            pointer-events: none;
+
+        }
+
+        .cat-reveal.show {
+
+            display: block;
+
+        }
+
+        /*
+
+         * JavaScript controls the cat's position.
+
+         */
+
+        #dvd-cat {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 140px;
+
+            height: auto;
+
+            z-index: 10001;
+
+            pointer-events: none;
+
+            user-select: none;
+
+            image-rendering: pixelated;
+
+            will-change: transform;
+
+        }
+
+        #dvd-cat.glowing {
+
+            filter:
+
+                drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #fff) drop-shadow(0 0 20px #fff) drop-shadow(0 0 35px #fff);
+
+            animation: catGlowPulse 0.35s ease-in-out infinite alternate;
+
+        }
+
+        @keyframes catGlowPulse {
+
+            from {
+
+                filter:
+
+                    drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #fff) drop-shadow(0 0 20px #fff);
+
+            }
+
+            to {
+
+                filter:
+
+                    drop-shadow(0 0 10px #fff) drop-shadow(0 0 25px #fff) drop-shadow(0 0 45px #fff);
+
+            }
+
+        }
+
+        .cat-trail {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 140px;
+
+            height: auto;
+
+            pointer-events: none;
+
+            user-select: none;
+
+            image-rendering: pixelated;
+
+            opacity: 0.35;
+
+            z-index: 10000;
+
+            animation: fadeCatTrail 0.5s linear forwards;
+
+        }
+
+        @keyframes fadeCatTrail {
+
+            from {
+
+                opacity: 0.35;
+
+            }
+
+            to {
+
+                opacity: 0;
+
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .cat-trail {
+
+                width: 95px;
+
+            }
+
+        }
+
+        /* =========================================
+
+           MOBILE
+
+           ========================================= */
+
+        @media (max-width: 600px) {
+
+            .card {
+
+                width: 92vw;
+
+                height: 62vh;
+
+            }
+
+            #ascii {
+
+                font-size: 2px;
+
+            }
+
+            .card-back {
+
+                padding: 30px;
+
+            }
+
+            .message h1 {
+
+                font-size: 21px;
+
+            }
+
+            .message p {
+
+                font-size: 13px;
+
+            }
+
+            #dvd-cat {
+
+                width: 95px;
+
+            }
+
+        }
+
+        /* =========================================
+
+           REDUCED MOTION
+
+           ========================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .ascii-confetti {
+
+                display: none;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- =========================================
+
+         BIRTHDAY CARD
+
+         ========================================= -->
+
+    <div class="card" id="card">
+
+        <div class="card-inner">
+
+            <!-- ===============================
+
+                 FRONT OF CARD
+
+                 =============================== -->
+
+            <div class="card-face card-front">
+
+                <div id="art-container">
+
+                    <pre id="ascii">Loading...</pre>
+
+                </div>
+
+                <button class="flip-hint" id="flip-button" type="button">
+                    FLIP TO SEE MESSAGE
+                </button>
+
+            </div>
+
+            <!-- ===============================
+
+                 BACK OF CARD
+
+                 =============================== -->
+
+            <div class="card-face card-back">
+
+                <div class="message">
+
+                    <h1>
+
+                        HAPPY BIRTHDAY!
+
+                    </h1>
+
+                    <p>I hope you have an amazing birthday and a brilliant year ahead.</p>
+
+                    <p>Very excited for Japan and I couldn't have found better people to do it with.</p>
+
+                    <p> I'm unemployed, so here's your very own unnecessarily complicated ASCII birthday card (this turns images into pictures made up of symbols).</p>
+
+                    <div class="signature">
+
+                        - Shivani
+
+                    </div>
+
+                    <!-- =========================
+
+                         SECRET BUTTON
+
+                         ========================= -->
+
+                    <div class="secret-area">
+
+                        <button id="dont-click" type="button">
+                            DO NOT CLICK
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================
+
+         BOUNCING CAT
+
+         IMPORTANT:
+
+         This is OUTSIDE the card.
+
+         ========================================= -->
+
+    <div id="cat-reveal" class="cat-reveal">
+
+        <img id="dvd-cat" src="oia-uia.gif" alt="Bouncing cat">
+
+    </div>
+
+    <script>
+        /* =========================================
+        CARD FLIP + CONFETTI
+        ========================================= */
+
+        const card = document.getElementById("card");
+        let confettiRunning = false;
+
+
+        /* =========================================
+        ASCII CONFETTI
+        ========================================= */
+
+        function launchAsciiConfetti() {
+            if (confettiRunning) {
+                return;
+            }
+
+            confettiRunning = true;
+
+            const characters = [
+                "*",
+                "+",
+                "#",
+                "@"
+            ];
+
+            // Make 70 pieces of ASCII confetti.
+            for (let i = 0; i < 70; i++) {
+                const piece = document.createElement("span");
+
+                piece.className = "ascii-confetti";
+
+                piece.textContent =
+                    characters[
+                        Math.floor(
+                            Math.random() * characters.length
+                        )
+                    ];
+
+                // Random position.
+                piece.style.left =
+                    `${Math.random() * 100}vw`;
+
+                // Random size.
+                piece.style.fontSize =
+                    `${10 + Math.random() * 12}px`;
+
+                // Random opacity.
+                piece.style.opacity =
+                    `${0.55 + Math.random() * 0.45}`;
+
+                // Random sideways drift.
+                piece.style.setProperty(
+                    "--drift",
+                    `${-70 + Math.random() * 140}px`
+                );
+
+                // Random spin.
+                piece.style.setProperty(
+                    "--spin",
+                    `${-360 + Math.random() * 720}deg`
+                );
+
+                // Random animation speed.
+                const duration =
+                    1200 + Math.random() * 800;
+
+                const delay =
+                    Math.random() * 250;
+
+                piece.style.animationDuration =
+                    `${duration}ms`;
+
+                piece.style.animationDelay =
+                    `${delay}ms`;
+
+                document.body.appendChild(piece);
+
+                // Remove the confetti when finished.
+                setTimeout(
+                    () => {
+                        piece.remove();
+                    },
+                    duration + delay + 100
+                );
+            }
+
+            // Allow another burst later.
+            setTimeout(
+                () => {
+                    confettiRunning = false;
+                },
+                2200
+            );
+        }
+
+
+        /* =========================================
+        FLIP CARD
+        ========================================= */
+
+        card.addEventListener(
+            "click",
+            () => {
+                const openingCard =
+                    !card.classList.contains("flipped");
+
+                card.classList.toggle("flipped");
+
+                // Only launch confetti when going FRONT -> BACK.
+                if (openingCard) {
+                    setTimeout(
+                        launchAsciiConfetti,
+                        350
+                    );
+                }
+            }
+        );
+
+
+        /* =========================================
+        DO NOT CLICK EASTER EGG
+        ========================================= */
+
+        const dontClickButton =
+            document.getElementById("dont-click");
+
+        const catReveal =
+            document.getElementById("cat-reveal");
+
+        const dvdCat =
+            document.getElementById("dvd-cat");
+
+        const catAudio =
+            new Audio("W&W - OIIA OIIA (Spinning Cat).mp3");
+
+        catAudio.volume = 0.7;
+
+        let dontClickCount = 0;
+
+        /*
+            Button sequence:
+
+            [DO NOT CLICK]
+                ↓
+                [OK...]
+                ↓
+                ;>
+                ↓
+            RELEASE CAT
+        */
+
+        const dontClickMessages = [
+            "DO NOT CLICK",
+            "OK..."
+        ];
+
+
+        /* =========================================
+        DVD CAT VARIABLES
+        ========================================= */
+
+        let catX = 100;
+        let catY = 100;
+
+        /*
+            Speeds are measured in pixels per second.
+
+            Normal:
+            360 px/s
+
+            Crazy:
+            1080 px/s
+
+            Super crazy after glow:
+            gradually increases even further.
+        */
+
+        let catSpeedX = 360;
+        let catSpeedY = 360;
+
+        let lastCatFrameTime = null;
+
+        let catReleased = false;
+        let catGoingCrazy = false;
+
+        let lastTrailTime = 0;
+
+
+        /* =========================================
+        RELEASE CAT
+        ========================================= */
+
+        function startBouncingCat() {
+            if (catReleased) {
+                return;
+            }
+
+            catReleased = true;
+            catGoingCrazy = false;
+
+            lastCatFrameTime = null;
+            lastTrailTime = 0;
+
+            dvdCat.classList.remove("glowing");
+
+            // Make absolutely sure there is no old shake.
+            document.body.style.transform = "";
+
+            // Make cat visible.
+            catReveal.classList.add("show");
+
+            // Start song from beginning.
+            catAudio.currentTime = 0;
+            catAudio.play();
+
+            /*
+                Wait until visible before measuring it.
+            */
+
+            const catWidth =
+                dvdCat.offsetWidth;
+
+            const catHeight =
+                dvdCat.offsetHeight;
+
+            // Start exactly in centre.
+            catX =
+                (window.innerWidth - catWidth) / 2;
+
+            catY =
+                (window.innerHeight - catHeight) / 2;
+
+            // Cat stays still for first 30 seconds.
+            catSpeedX = 0;
+            catSpeedY = 0;
+
+            dvdCat.style.transform =
+                `translate3d(${catX}px, ${catY}px, 0)`;
+
+            requestAnimationFrame(animateCat);
+        }
+
+
+        /* =========================================
+        CAT AUDIO EVENTS
+        ========================================= */
+
+        catAudio.addEventListener(
+            "timeupdate",
+            () => {
+
+                /*
+                    30 SECONDS
+
+                    Cat starts moving normally.
+                */
+
+                if (
+                    catAudio.currentTime >= 30 &&
+                    catSpeedX === 0 &&
+                    catSpeedY === 0
+                ) {
+                    catSpeedX =
+                        Math.random() > 0.5
+                            ? 360
+                            : -360;
+
+                    catSpeedY =
+                        Math.random() > 0.5
+                            ? 360
+                            : -360;
+                }
+
+
+                /*
+                    33 SECONDS
+
+                    Cat goes completely insane.
+
+                    This also activates the first
+                    stage of screen shake.
+                */
+
+                if (
+                    catAudio.currentTime >= 33 &&
+                    !catGoingCrazy
+                ) {
+                    catGoingCrazy = true;
+
+                    catSpeedX =
+                        Math.sign(catSpeedX || 1) * 1080;
+
+                    catSpeedY =
+                        Math.sign(catSpeedY || 1) * 1080;
+                }
+
+
+                /*
+                    1 MINUTE 30 SECONDS
+
+                    Cat starts glowing.
+
+                    This is also where:
+                    - shake becomes much stronger
+                    - cat speed starts escalating
+                */
+
+                if (catAudio.currentTime >= 90) {
+                    dvdCat.classList.add("glowing");
+                }
+            }
+        );
+
+
+        /* =========================================
+        RESET CAT WHEN SONG ENDS
+        ========================================= */
+
+        catAudio.addEventListener(
+            "ended",
+            () => {
+
+                // Hide cat.
+                catReveal.classList.remove("show");
+
+                // Remove glow.
+                dvdCat.classList.remove("glowing");
+
+                // IMPORTANT:
+                // completely remove screen shake.
+                document.body.style.transform = "";
+
+                // Stop crazy mode.
+                catGoingCrazy = false;
+
+                // Stop animation loop.
+                catReleased = false;
+
+                // Reset animation timing.
+                lastCatFrameTime = null;
+
+                // Reset speeds.
+                catSpeedX = 360;
+                catSpeedY = 360;
+
+                // Reset button.
+                dontClickCount = 0;
+
+                dontClickButton.textContent =
+                    "DO NOT CLICK";
+
+                dontClickButton.disabled = false;
+
+                // Remove remaining trails.
+                document
+                    .querySelectorAll(".cat-trail")
+                    .forEach(
+                        trail => trail.remove()
+                    );
+            }
+        );
+
+
+        /* =========================================
+        CAT TRAIL
+        ========================================= */
+
+        function createCatTrail() {
+            const trail =
+                document.createElement("img");
+
+            trail.src = dvdCat.src;
+            trail.className = "cat-trail";
+
+            trail.style.transform =
+                `translate3d(${catX}px, ${catY}px, 0)`;
+
+            document.body.appendChild(trail);
+
+            setTimeout(
+                () => {
+                    trail.remove();
+                },
+                500
+            );
+        }
+
+
+        /* =========================================
+        SCREEN SHAKE
+        =========================================
+
+        TIMELINE:
+
+        0 - 33 seconds
+            No shake.
+
+        33 - 90 seconds
+            Shake slowly builds.
+
+        90+ seconds
+            Cat glows and the shake starts
+            escalating MUCH more aggressively.
+        ========================================= */
+
+        function updateScreenShake() {
+
+            if (!catGoingCrazy) {
+                document.body.style.transform = "";
+                return;
+            }
+
+            const currentTime =
+                catAudio.currentTime;
+
+            let shakeIntensity;
+
+
+            /*
+                STAGE ONE
+                33 -> 90 seconds
+
+                Starts at roughly 2px.
+                Slowly builds toward roughly 12px.
+            */
+
+            if (currentTime < 90) {
+
+                const stageOneProgress =
+                    Math.max(
+                        0,
+                        Math.min(
+                            1,
+                            (currentTime - 33) / (90 - 33)
+                        )
+                    );
+
+                shakeIntensity =
+                    2 + stageOneProgress * 10;
+            }
+
+
+            /*
+                STAGE TWO
+                90 seconds onward
+
+                The cat is glowing now.
+
+                Start at 12px and then ramp
+                much harder.
+
+                Maximum = 30px.
+            */
+
+            else {
+
+                const glowTime =
+                    currentTime - 90;
+
+                shakeIntensity =
+                    Math.min(
+                        12 + glowTime * 0.6,
+                        30
+                    );
+            }
+
+
+            /*
+                Random camera movement.
+
+                Multiplying Y by 0.8 makes the
+                horizontal shake slightly stronger
+                than the vertical shake.
+            */
+
+            const shakeX =
+                (Math.random() * 2 - 1) *
+                shakeIntensity;
+
+            const shakeY =
+                (Math.random() * 2 - 1) *
+                shakeIntensity *
+                0.8;
+
+
+            /*
+                Tiny rotation gets introduced once
+                the cat starts glowing.
+
+                This makes the 90+ second section
+                feel noticeably more chaotic.
+            */
+
+            let rotation = 0;
+
+            if (currentTime >= 90) {
+
+                const rotationIntensity =
+                    Math.min(
+                        0.15 +
+                        (currentTime - 90) * 0.015,
+                        0.8
+                    );
+
+                rotation =
+                    (Math.random() * 2 - 1) *
+                    rotationIntensity;
+            }
+
+
+            document.body.style.transform =
+                `translate(${shakeX}px, ${shakeY}px)
+                rotate(${rotation}deg)`;
+        }
+
+
+        /* =========================================
+        DVD CAT ANIMATION
+        ========================================= */
+
+        function animateCat(timestamp) {
+
+            /*
+                Calculate delta time.
+            */
+
+            if (lastCatFrameTime === null) {
+                lastCatFrameTime = timestamp;
+            }
+
+            const deltaTime =
+                Math.min(
+                    (timestamp - lastCatFrameTime) / 1000,
+                    0.05
+                );
+
+            lastCatFrameTime = timestamp;
+
+
+            /*
+                Get displayed cat dimensions.
+            */
+
+            const catWidth =
+                dvdCat.getBoundingClientRect().width;
+
+            const catHeight =
+                dvdCat.getBoundingClientRect().height;
+
+
+            /*
+                Browser boundaries.
+            */
+
+            const maxX =
+                Math.max(
+                    0,
+                    window.innerWidth - catWidth
+                );
+
+            const maxY =
+                Math.max(
+                    0,
+                    window.innerHeight - catHeight
+                );
+
+
+            /* =========================================
+            CAT HAS LOST CONTROL
+            ========================================= */
+
+            if (catGoingCrazy) {
+
+                /*
+                    Before 90 seconds:
+                    1080 px/s.
+
+                    After 90 seconds:
+                    speed starts increasing.
+
+                    It eventually caps at 1800 px/s.
+                */
+
+                let crazySpeed = 1080;
+
+                if (catAudio.currentTime >= 90) {
+
+                    const glowTime =
+                        catAudio.currentTime - 90;
+
+                    crazySpeed =
+                        Math.min(
+                            1080 + glowTime * 20,
+                            1800
+                        );
+                }
+
+
+                /*
+                    Cat changes direction randomly.
+
+                    After 90 seconds the direction
+                    changes also become more frequent.
+                */
+
+                let directionChangesPerSecond = 5;
+
+                if (catAudio.currentTime >= 90) {
+
+                    const glowTime =
+                        catAudio.currentTime - 90;
+
+                    directionChangesPerSecond =
+                        Math.min(
+                            5 + glowTime * 0.08,
+                            9
+                        );
+                }
+
+
+                const changeChance =
+                    1 - Math.exp(
+                        -directionChangesPerSecond *
+                        deltaTime
+                    );
+
+
+                if (Math.random() < changeChance) {
+
+                    catSpeedX =
+                        (Math.random() * 2 - 1) *
+                        crazySpeed;
+
+                    catSpeedY =
+                        (Math.random() * 2 - 1) *
+                        crazySpeed;
+                }
+            }
+
+
+            /* =========================================
+            SCREEN SHAKE
+            ========================================= */
+
+            updateScreenShake();
+
+
+            /* =========================================
+            MOVE CAT
+            ========================================= */
+
+            catX += catSpeedX * deltaTime;
+            catY += catSpeedY * deltaTime;
+
+
+            /* =========================================
+            RIGHT WALL
+            ========================================= */
+
+            if (catX >= maxX) {
+                catX = maxX;
+
+                catSpeedX =
+                    -Math.abs(catSpeedX);
+            }
+
+
+            /* =========================================
+            LEFT WALL
+            ========================================= */
+
+            if (catX <= 0) {
+                catX = 0;
+
+                catSpeedX =
+                    Math.abs(catSpeedX);
+            }
+
+
+            /* =========================================
+            BOTTOM WALL
+            ========================================= */
+
+            if (catY >= maxY) {
+                catY = maxY;
+
+                catSpeedY =
+                    -Math.abs(catSpeedY);
+            }
+
+
+            /* =========================================
+            TOP WALL
+            ========================================= */
+
+            if (catY <= 0) {
+                catY = 0;
+
+                catSpeedY =
+                    Math.abs(catSpeedY);
+            }
+
+
+            /* =========================================
+            DRAW CAT
+            ========================================= */
+
+            dvdCat.style.transform =
+                `translate3d(${catX}px, ${catY}px, 0)`;
+
+
+            /* =========================================
+            CAT TRAIL
+            ========================================= */
+
+            const now = performance.now();
+
+
+            /*
+                Trail starts at 30 seconds.
+
+                Once glowing, trails appear more
+                frequently to make the ending
+                more chaotic.
+            */
+
+            let trailInterval = 50;
+
+            if (catAudio.currentTime >= 90) {
+
+                const glowTime =
+                    catAudio.currentTime - 90;
+
+                trailInterval =
+                    Math.max(
+                        20,
+                        50 - glowTime
+                    );
+            }
+
+
+            if (
+                catAudio.currentTime >= 30 &&
+                now - lastTrailTime > trailInterval
+            ) {
+                createCatTrail();
+
+                lastTrailTime = now;
+            }
+
+
+            /* =========================================
+            NEXT FRAME
+            ========================================= */
+
+            if (catReleased) {
+                requestAnimationFrame(animateCat);
+            }
+        }
+
+
+        /* =========================================
+        WINDOW RESIZE
+        ========================================= */
+
+        window.addEventListener(
+            "resize",
+            () => {
+
+                if (!catReleased) {
+                    return;
+                }
+
+                const catWidth =
+                    dvdCat.getBoundingClientRect().width;
+
+                const catHeight =
+                    dvdCat.getBoundingClientRect().height;
+
+                const maxX =
+                    Math.max(
+                        0,
+                        window.innerWidth - catWidth
+                    );
+
+                const maxY =
+                    Math.max(
+                        0,
+                        window.innerHeight - catHeight
+                    );
+
+                catX =
+                    Math.min(
+                        Math.max(catX, 0),
+                        maxX
+                    );
+
+                catY =
+                    Math.min(
+                        Math.max(catY, 0),
+                        maxY
+                    );
+            }
+        );
+
+
+        /* =========================================
+        SECRET BUTTON
+        ========================================= */
+
+        dontClickButton.addEventListener(
+            "click",
+            event => {
+
+                /*
+                    Prevent clicking the secret button
+                    from flipping the card.
+                */
+
+                event.stopPropagation();
+
+                dontClickCount++;
+
+
+                /*
+                    First click:
+
+                    [DO NOT CLICK]
+                    becomes
+                    [OK...]
+                */
+
+                if (
+                    dontClickCount <
+                    dontClickMessages.length
+                ) {
+                    dontClickButton.textContent =
+                        dontClickMessages[
+                            dontClickCount
+                        ];
+
+                    return;
+                }
+
+
+                /*
+                    Second click:
+
+                    They were warned.
+                */
+
+                dontClickButton.textContent = ";>";
+
+                dontClickButton.disabled = true;
+
+                startBouncingCat();
+            }
+        );
+
+
+        /* =========================================
+        LOOPING MAIN ASCII ART
+        ========================================= */
+
+        const artFiles = [
+            "art/art1.txt",
+            "art/art2.txt",
+            "art/art3.txt",
+            "art/art4.txt",
+        ];
+
+        // Pause after finished artwork.
+        const artDisplayTime = 2000;
+
+        // Line-by-line drawing speed.
+        const artLineTime = 25;
+
+        const ascii =
+            document.getElementById("ascii");
+
+        const artCache = new Map();
+
+        let nextArtIndex = 0;
+
+
+        /*
+            Fetch each file only once per page load.
+        */
+
+        async function loadAsciiArt(filename) {
+
+            if (artCache.has(filename)) {
+                return artCache.get(filename);
+            }
+
+            try {
+
+                const response =
+                    await fetch(filename);
+
+                if (!response.ok) {
+                    throw new Error(
+                        `HTTP ${response.status} ${response.statusText}`
+                    );
+                }
+
+                const text =
+                    await response.text();
+
+                const lines =
+                    text
+                        .replace(/\r/g, "")
+                        .split("\n");
+
+                artCache.set(
+                    filename,
+                    lines
+                );
+
+                return lines;
+
+            } catch (error) {
+
+                console.error(
+                    `Could not load ASCII art "${filename}"; skipping it.`,
+                    error
+                );
+
+                artCache.set(
+                    filename,
+                    null
+                );
+
+                return null;
+            }
+        }
+
+
+        /*
+            Draw artwork one line at a time.
+        */
+
+        function drawAsciiArt(lines) {
+
+            return new Promise(
+                resolve => {
+
+                    let currentLine = 0;
+
+                    function drawLine() {
+
+                        const previous =
+                            ascii.querySelector(
+                                ".drawing"
+                            );
+
+                        if (previous) {
+
+                            previous.classList.remove(
+                                "drawing"
+                            );
+
+                            previous.classList.add(
+                                "finished"
+                            );
+                        }
+
+
+                        if (
+                            currentLine >=
+                            lines.length
+                        ) {
+                            resolve();
+                            return;
+                        }
+
+
+                        const line =
+                            document.createElement(
+                                "span"
+                            );
+
+                        line.className =
+                            "drawing";
+
+                        line.textContent =
+                            lines[currentLine];
+
+                        ascii.appendChild(line);
+
+                        ascii.appendChild(
+                            document.createTextNode(
+                                "\n"
+                            )
+                        );
+
+                        currentLine++;
+
+                        setTimeout(
+                            drawLine,
+                            artLineTime
+                        );
+                    }
+
+                    drawLine();
+                }
+            );
+        }
+
+
+        /* =========================================
+        SHOW NEXT ASCII ART
+        ========================================= */
+
+        async function showNextArt() {
+
+            ascii.textContent = "";
+
+            /*
+                Try at most one full pass so
+                missing files can't create an
+                endless loop.
+            */
+
+            for (
+                let attempts = 0;
+                attempts < artFiles.length;
+                attempts++
+            ) {
+
+                const filename =
+                    artFiles[nextArtIndex];
+
+                nextArtIndex =
+                    (nextArtIndex + 1) %
+                    artFiles.length;
+
+                const lines =
+                    await loadAsciiArt(filename);
+
+                if (lines === null) {
+                    continue;
+                }
+
+                await drawAsciiArt(lines);
+
+                setTimeout(
+                    showNextArt,
+                    artDisplayTime
+                );
+
+                return;
+            }
+
+
+            ascii.textContent =
+                "No ASCII artwork could be loaded.";
+
+            console.error(
+                "No ASCII artwork is available. Check artFiles and the file paths, then reload."
+            );
+        }
+
+
+        /* =========================================
+        START ASCII ART
+        ========================================= */
+
+        showNextArt();
+
+    </script>
+
+
+</body>
+
+</html>
