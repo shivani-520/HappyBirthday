@@ -763,6 +763,52 @@
     </div>
 
     <script>
+
+        let vibrationInterval = null;
+
+        function startPhoneVibration() {
+            if (!("vibrate" in navigator)) {
+                return;
+            }
+
+            // Initial vibration
+            navigator.vibrate([80, 70, 80, 70, 120]);
+
+            // Keep sending vibration bursts
+            vibrationInterval = setInterval(() => {
+                if (!catGoingCrazy) {
+                    stopPhoneVibration();
+                    return;
+                }
+
+                if (catAudio.currentTime >= 90) {
+                    // INSANE MODE
+                    navigator.vibrate([
+                        150, 30,
+                        150, 30,
+                        250, 40,
+                        300
+                    ]);
+                } else {
+                    // Normal shake mode
+                    navigator.vibrate([
+                        80, 80,
+                        100, 80,
+                        120
+                    ]);
+                }
+            }, 1000);
+        }
+
+        function stopPhoneVibration() {
+            if ("vibrate" in navigator) {
+                navigator.vibrate(0);
+            }
+
+            clearInterval(vibrationInterval);
+            vibrationInterval = null;
+        }
+
         /* =========================================
         CARD FLIP + CONFETTI
         ========================================= */
@@ -1058,6 +1104,9 @@
 
                     catSpeedY =
                         Math.sign(catSpeedY || 1) * 1080;
+
+                    // Make the phone vibrate
+                    startPhoneVibration();
                 }
 
 
@@ -1116,6 +1165,8 @@
                     "DO NOT CLICK";
 
                 dontClickButton.disabled = false;
+
+                stopPhoneVibration();
 
                 // Remove remaining trails.
                 document
